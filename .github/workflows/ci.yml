@@ -1,0 +1,32 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # FiveM runs 5.4. 5.3 is here because nothing in this resource should
+        # need anything newer, and this is the cheapest way to keep that true.
+        lua: ['5.3', '5.4']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install lua ${{ matrix.lua }}
+        run: sudo apt-get update && sudo apt-get install -y lua${{ matrix.lua }}
+
+      # Including import.lua, server/main.lua and the manifest — the files a
+      # server loads, which the suite cannot run but can at least compile.
+      - name: every file parses
+        run: find . -name '*.lua' -print0 | xargs -0 -n1 luac${{ matrix.lua }} -p
+
+      - name: tests
+        run: lua${{ matrix.lua }} test/run.lua
+        env:
+          NO_COLOR: '1'
