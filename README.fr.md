@@ -38,12 +38,18 @@ end)
 ```
 
 Standalone. Aucun framework, aucune dépendance, aucune base de données.
-**86 tests.**
+**93 tests.**
 
 ## Installation
 
-1. Téléchargez, posez `doorman` dans vos ressources, `ensure doorman` avant
-   tout ce qui s'en sert.
+1. Récupérez-le, gratuitement, au choix :
+   - **[en asset Cfx.re, sur la boutique CedricPoint](https://cedricpoint-developpement.tebex.io/)**
+     — il arrive dans votre [portail Cfx.re](https://portal.cfx.re/assets/granted-assets) ;
+   - **[sur la dernière release GitHub](https://github.com/CedricPoint/fivem-doorman/releases/latest)**
+     — `doorman-vX.Y.Z.zip`.
+
+   Décompressez-le dans vos ressources et `ensure doorman` avant tout ce qui
+   s'en sert.
 2. Dans la ressource à protéger, une ligne dans `fxmanifest.lua` :
 
 ```lua
@@ -52,6 +58,16 @@ server_script '@doorman/import.lua'
 
 Vous avez le global `doorman` dans cette ressource. Utilisez
 `doorman.on(...)` à la place de `RegisterNetEvent` + `AddEventHandler`.
+
+### Mises à jour
+
+Au démarrage, doorman demande à GitHub la dernière release et affiche une
+ligne si une version plus récente existe. Il ne télécharge et ne modifie
+jamais rien. Pour le couper :
+
+```cfg
+set doorman_version_check false
+```
 
 ## Ce qu'une règle peut dire
 
@@ -136,7 +152,7 @@ sans bibliothèque de mocks :
 lua test/run.lua
 ```
 
-86 tests, zéro dépendance. Ils couvrent ce qui est difficile à remarquer et
+93 tests, zéro dépendance. Ils couvrent ce qui est difficile à remarquer et
 gênant à livrer :
 
 - un limiteur à fenêtre fixe laisse passer le double à la jointure ; celui-ci

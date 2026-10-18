@@ -5,7 +5,7 @@ lua54 'yes'
 name 'doorman'
 author 'CedricPoint'
 description 'A doorman for your net events: checks who is calling, how often, and whether the payload makes sense.'
-version '1.0.0'
+version '1.1.0'
 repository 'https://github.com/CedricPoint/fivem-doorman'
 
 -- Other resources reach this with
@@ -20,6 +20,7 @@ files {
   'lib/schema.lua',
   'lib/policy.lua',
   'lib/doorman.lua',
+  'lib/version.lua',
   'server/resource.lua',
 }
 
@@ -28,3 +29,12 @@ files {
 -- the logic are byte for byte the ones the test suite runs under a plain
 -- `lua` binary.
 server_script 'server/main.lua'
+
+-- doorman is open source (MIT). When it is published as a Cfx.re asset, the
+-- escrow system would otherwise encrypt the Lua files; this keeps every one
+-- of them readable, exactly as they are on GitHub.
+escrow_ignore {
+  '*.lua',
+  'lib/*.lua',
+  'server/*.lua',
+}

@@ -19,6 +19,7 @@ local SPECS = {
   'spec.policy_spec',
   'spec.doorman_spec',
   'spec.resource_spec',
+  'spec.version_spec',
 }
 
 local filter = ...

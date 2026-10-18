@@ -29,6 +29,7 @@ local function import(name)
 end
 
 local Policy = import('lib.policy')
+local Version = import('lib.version')
 
 local config = {
   warn = GetConvarInt('doorman_warn', 3),
@@ -121,3 +122,47 @@ end, true)
 
 print(('^2[doorman]^7 watching — warn at %d, kick at %s, over %ds')
   :format(config.warn, config.kick == false and 'never' or config.kick, config.window))
+
+--[[
+  Is a newer release out? Asked once, at start, of GitHub's public API.
+
+  It only ever prints: nothing is downloaded and nothing is changed. Any
+  failure (no network, rate limit, GitHub down) is silent apart from one grey
+  line, because a version check must never be the reason a server's console
+  fills up. Turn it off with:  set doorman_version_check false
+]]
+local RELEASES = 'https://github.com/CedricPoint/fivem-doorman/releases/latest'
+local LATEST_API = 'https://api.github.com/repos/CedricPoint/fivem-doorman/releases/latest'
+
+local function version_check()
+  local setting = GetConvar('doorman_version_check', 'true'):lower()
+  if setting == 'false' or setting == '0' or setting == 'off' then return end
+
+  local running = GetResourceMetadata(RESOURCE, 'version', 0) or '0.0.0'
+
+  PerformHttpRequest(LATEST_API, function(status, body)
+    if status ~= 200 or not body then
+      print(('^9[doorman] could not check for updates (HTTP %s) — see %s^7'):format(status, RELEASES))
+      return
+    end
+
+    local ok, release = pcall(json.decode, body)
+    local tag = ok and type(release) == 'table' and release.tag_name
+
+    local state, err = Version.status(running, tag)
+    if not state then
+      print(('^9[doorman] could not check for updates (%s)^7'):format(err))
+    elseif state == 'outdated' then
+      print(('^3[doorman] update available: %s (you are running %s) — %s^7')
+        :format(Version.format(Version.parse(tag)), running, release.html_url or RELEASES))
+    else
+      print(('^2[doorman]^7 up to date (%s)'):format(running))
+    end
+  end, 'GET', '', { ['User-Agent'] = 'fivem-doorman', ['Accept'] = 'application/vnd.github+json' })
+end
+
+-- After the start-up burst, so the line is not lost among other resources'.
+CreateThread(function()
+  Wait(5000)
+  version_check()
+end)

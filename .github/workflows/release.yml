@@ -1,0 +1,47 @@
+name: release
+
+# Push a tag such as v1.2.0 and this builds the resource zip and publishes the
+# GitHub release. The tag must match the version in fxmanifest.lua, otherwise
+# the in-game version check would tell people to update to what they already run.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: tests must pass before anything is published
+        run: |
+          sudo apt-get update && sudo apt-get install -y lua5.4
+          find . -name '*.lua' -print0 | xargs -0 -n1 luac5.4 -p
+          lua5.4 test/run.lua
+        env:
+          NO_COLOR: '1'
+
+      - name: the tag matches the manifest
+        run: |
+          manifest=$(sed -n "s/^version '\(.*\)'/\1/p" fxmanifest.lua)
+          if [ "v$manifest" != "$GITHUB_REF_NAME" ]; then
+            echo "tag $GITHUB_REF_NAME but fxmanifest.lua says $manifest" >&2
+            exit 1
+          fi
+
+      # Only what a server needs: the folder is named doorman so that
+      # `ensure doorman` and '@doorman/import.lua' work straight out of the zip.
+      - name: build the zip
+        run: |
+          mkdir -p dist/doorman
+          cp -r fxmanifest.lua import.lua lib server LICENSE README.md README.fr.md dist/doorman/
+          cd dist && zip -r "doorman-$GITHUB_REF_NAME.zip" doorman
+
+      - name: publish
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/doorman-${{ github.ref_name }}.zip
+          body_path: .github/release-notes.md

@@ -16,7 +16,7 @@ it will get a test named after it.
 You need a `lua` binary. Nothing else — no LuaRocks, no busted, no server.
 
 ```bash
-lua test/run.lua            # all 86
+lua test/run.lua            # all 93
 lua test/run.lua schema     # only the specs whose name contains "schema"
 ```
 

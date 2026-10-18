@@ -36,12 +36,18 @@ doorman.on('shop:buy', {
 end)
 ```
 
-Standalone. No framework, no dependency, no database. **86 tests.**
+Standalone. No framework, no dependency, no database. **93 tests.**
 
 ## Install
 
-1. Download, drop `doorman` in your resources folder, `ensure doorman`
-   before anything that uses it.
+1. Get it, for free, either way:
+   - **[Cfx.re asset, through the CedricPoint store](https://cedricpoint-developpement.tebex.io/)**
+     — it lands in your [Cfx.re portal](https://portal.cfx.re/assets/granted-assets);
+   - **[the latest GitHub release](https://github.com/CedricPoint/fivem-doorman/releases/latest)**
+     — `doorman-vX.Y.Z.zip`.
+
+   Unzip it into your resources folder and `ensure doorman` before anything
+   that uses it.
 2. In the resource you want to protect, add one line to `fxmanifest.lua`:
 
 ```lua
@@ -50,6 +56,15 @@ server_script '@doorman/import.lua'
 
 That gives you the global `doorman` inside that resource. Use
 `doorman.on(...)` instead of `RegisterNetEvent` + `AddEventHandler`.
+
+### Updates
+
+At start, doorman asks GitHub for the latest release and prints one line if a
+newer one is out. It never downloads or changes anything. To turn it off:
+
+```cfg
+set doorman_version_check false
+```
 
 ## What a rule can say
 
@@ -131,7 +146,7 @@ mocking framework:
 lua test/run.lua
 ```
 
-86 tests, no dependencies. They cover the things that are hard to notice and
+93 tests, no dependencies. They cover the things that are hard to notice and
 embarrassing to ship:
 
 - a fixed-window limiter lets double the limit through at the seam; this one

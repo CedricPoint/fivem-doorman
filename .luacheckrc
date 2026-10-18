@@ -7,9 +7,10 @@ read_globals = {
   'GetCurrentResourceName', 'GetGameTimer', 'GetInvokingResource', 'GetPlayerName',
   'IsPlayerAceAllowed', 'LoadResourceFile', 'RegisterCommand', 'RegisterNetEvent',
   'TriggerClientEvent', 'Wait', 'exports', 'source',
+  'GetResourceMetadata', 'PerformHttpRequest', 'json',
   -- the manifest is Lua too
   'fx_version', 'game', 'lua54', 'name', 'author', 'description', 'version',
-  'repository', 'files', 'server_script', 'server_scripts', 'dependency',
+  'repository', 'files', 'server_script', 'server_scripts', 'dependency', 'escrow_ignore',
 }
 
 -- import.lua deliberately sets this one, for the resource that loads it.
